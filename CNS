@@ -111,7 +111,214 @@ buf.append(hexDigit[b[j] & 0x0f]);
 
 
 
+Rijndael
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.util.Scanner;
+
+public class AES {
+    public static void main(String[] args) {
+        try {
+        
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128); // AES-128
+            SecretKey key = keyGen.generateKey();
+
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter your message: ");
+            String message = sc.nextLine();
+
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encrypted = cipher.doFinal(message.getBytes());
+
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] decrypted = cipher.doFinal(encrypted);
+
+            System.out.println("\nOriginal Message: " + message);
+            System.out.println("Encrypted (Hex): " + bytesToHex(encrypted));
+            System.out.println("Decrypted: " + new String(decrypted));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+}
+
+
+
+
+
+
+
+
+RC4
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+class RC4
+{
+    public static void main(String[] args) throws Exception
+    {
+        KeyGenerator keygen=KeyGenerator.getInstance("RC4");
+        keygen.init(128);
+        SecretKey secretkey=keygen.generateKey();
+        String originalText="Hello, RC4 Encryption!";
+        System.out.println("original"+originalText);
+        Cipher cipher=Cipher.getInstance("RC4");
+        cipher.init(Cipher.ENCRYPT_MODE,secretkey);
+        byte[] encryptedBytes=cipher.doFinal(originalText.getBytes("UTF-8"));
+        StringBuilder hexEncrypted=new StringBuilder();
+        for(byte b:encryptedBytes)
+        {
+            hexEncrypted.append(String.format("%02x",b));
+        }
+        System.out.println("Encrypted (hex)"+hexEncrypted.toString());
+        cipher.init(Cipher.DECRYPT_MODE,secretkey);
+        byte[] decryptedBytes=cipher.doFinal(encryptedBytes);
+        String decryptedText=new String(decryptedBytes,"UTF-8");
+        System.out.println("Decrypted"+decryptedText);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+RSA
+
+#include<stdio.h> 
+#include<stdlib.h> 
+int modfun(int a,int n,int b){ 
+if(b==1){ 
+return a%n; 
+} 
+else{ 
+return ((a%n)*modfun(a,n,b-1))%n; 
+} 
+} 
+int gcd(int a,int b){ 
+if(a==0){ 
+return b; 
+} 
+else if(b==0){ 
+return a; 
+} 
+else if(a==b){ 
+return a; 
+} 
+else if(a>b) return gcd(a-b,b); 
+else return gcd(a,b-a); 
+} 
+int totient(int n){ 
+int count=0; 
+for(int i=1;i<=n;i++){ 
+if(gcd(n,i)==1){ 
+count++; 
+} 
+} 
+return count; 
+} 
+void main(){ 
+int a,b,n,e,d,phi,m; 
+int em,dm; 
+printf("enter two prime numbers\n"); 
+scanf("%d %d",&a,&b); 
+n=a*b; 
+phi=totient(n); 
+printf("%d",phi); 
+/*phi=(a-1)*(b-1);*/ 
+printf("\nenter e value: "); 
+scanf("%d",&e); 
+if(0<e<n && gcd(e,phi)==1){ 
+for(int i=2;i<n;i++){ 
+if((e*i)%phi==1){ 
+printf("d value is: %d",i); 
+d=i; 
+break; 
+} 
+} 
+printf("\nKU {%d %d}\n",e,n); 
+printf("KR {%d %d}",d,n); 
+printf("\nEnter message\n"); 
+scanf("%d",&m); 
+em=modfun(m,n,e); 
+dm=modfun(em,n,d); 
+printf("encrypted message %d\n",em); 
+printf("decrypted message %d\n",dm%n); 
+} 
+else{ 
+printf("invalid e value"); 
+} 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+MD5
+
+import java.security.*; 
+class MD5 { 
+public static void main(String[] a) { 
+try { 
+MessageDigest md = MessageDigest.getInstance("MD5"); 
+System.out.println("Message digest object info: "); 
+System.out.println(" Algorithm = " +md.getAlgorithm()); 
+System.out.println(" Provider = " +md.getProvider()); 
+System.out.println(" ToString = " +md.toString()); 
+String input = ""; 
+md.update(input.getBytes()); 
+byte[] output = md.digest(); 
+System.out.println(); 
+System.out.println("MD5(\""+input+"\") = " +bytesToHex(output)); 
+input = "abc"; 
+md.update(input.getBytes()); 
+output = md.digest(); 
+System.out.println(); 
+System.out.println("MD5(\""+input+"\") = " +bytesToHex(output)); 
+input = "abcdefghijklmnopqrstuvwxyz"; 
+md.update(input.getBytes()); 
+output = md.digest(); 
+System.out.println(); 
+System.out.println("MD5(\"" +input+"\") = " 
++bytesToHex(output)); System.out.println(""); 
+} 
+catch (Exception e) { 
+System.out.println("Exception: " +e); } 
+} 
+public static String bytesToHex(byte[] b) { 
+char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}; 
+StringBuffer buf = new StringBuffer(); 
+for (int j=0; j<b.length; j++) { 
+buf.append(hexDigit[(b[j] >> 4) & 0x0f]); 
+buf.append(hexDigit[b[j] & 0x0f]); } 
+return buf.toString(); } } 
 
 
 
